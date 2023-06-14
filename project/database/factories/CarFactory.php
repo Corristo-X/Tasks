@@ -28,13 +28,5 @@ class CarFactory extends Factory
             'brand' => $this->faker->randomElement(['Toyota', 'Ford', 'BMW', 'Mercedes', 'Honda']),
         ];
     }
-    public function configure()
-{
-    return $this->afterCreating(function (Car $car) {
-        $car->users()->attach(
-            User::all()->random()->id,
-            ['currently_using' => $this->faker->boolean()]
-        );
-    });
-}
+
 }

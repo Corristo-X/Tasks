@@ -1,10 +1,10 @@
 <?php
-/*
+
 use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-*/
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,8 +21,13 @@ use App\Models\User;
 use App\Models\Car;
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\CarController;
 
+Route::resource('cars', CarController::class);
+//Route::get('/', [HomeController::class, 'index']);
 Route::get('/clients/{client}', [ClientController::class, 'show']);
+Route::get('/cars/{car}', [CarController::class, 'show'])->name('cars.show');
+
 Route::get('/test', function () {
 
     /*
