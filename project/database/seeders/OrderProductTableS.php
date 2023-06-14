@@ -6,7 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Order;
 use App\Models\Product;
-class OrderProductTableSeeder extends Seeder
+class OrderProductTableS extends Seeder
 {
     /**
      * Run the database seeds.
@@ -23,7 +23,6 @@ class OrderProductTableSeeder extends Seeder
         foreach ($orders as $order) {
             $order->products()->attach(
                 $products->random(rand(1, 3))->pluck('id')->toArray(),
-
             );
         }
     }

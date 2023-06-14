@@ -37,13 +37,5 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
-    public function configure()
-{
-    return $this->afterCreating(function (User $user) {
-        $user->cars()->attach(
-            Car::all()->random()->id,
-            ['currently_using' => $this->faker->boolean()]
-        );
-    });
-}
+
 }
