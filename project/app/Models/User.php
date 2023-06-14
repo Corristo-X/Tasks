@@ -42,4 +42,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function cars()
+    {
+        return $this->belongsToMany(Car::class)
+                    ->withPivot('currently_using')
+                    ->withTimestamps();
+    }
+
 }

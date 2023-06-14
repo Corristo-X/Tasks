@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use App\Models\User;
+use App\Models\Car;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -35,4 +37,13 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+    public function configure()
+{
+    return $this->afterCreating(function (User $user) {
+        $user->cars()->attach(
+            Car::all()->random()->id,
+            ['currently_using' => $this->faker->boolean()]
+        );
+    });
+}
 }
