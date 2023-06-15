@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Notifications\UserDeactivated;
 
 class EmployeeController extends Controller
 {
@@ -32,4 +34,20 @@ class EmployeeController extends Controller
 
         return response()->json(['message' => 'Employee deleted successfully'], 200);
     }
+    public function deactivateUser($userId)
+    {
+        // Wyszukaj użytkownika
+        $user = User::find($userId);
+
+        // Dezaktywuj użytkownika
+        $user->active = false;
+        $user->save();
+
+        // Wysyłamy notyfikację
+        $user->notify(new UserDeactivated());
+
+        // Przekierowujemy do jakiejś strony
+        return redirect()->route('users.index');
+    }
+
 }

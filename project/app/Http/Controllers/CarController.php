@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Car;
+use App\Models\User;
+use App\Notifications\CarAssigned;
 class CarController extends Controller
 {
     /**
@@ -69,4 +71,22 @@ class CarController extends Controller
         $car->delete();
         return redirect()->route('cars.index');
     }
+    public function assignCar(Request $request, $carId, $userId)
+    {
+        // Wyszukaj samochód i użytkownika
+        $car = Car::find($carId);
+        $user = User::find($userId);
+
+        // Przypisz samochód do użytkownika
+        $user->car_id = $car->id;
+        $user->save();
+
+        // Wysyłamy notyfikację
+        $user->notify(new CarAssigned($car));
+
+        // Przekierowujemy do jakiejś strony
+        return redirect()->route('cars.index');
+    }
+
+
 }
