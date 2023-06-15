@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\CarAssigned;
+use App\Notifications\UserDeactivated;
 
 class User extends Authenticatable
 {
@@ -58,5 +59,13 @@ class User extends Authenticatable
         // Wysyłanie notyfikacji
         $this->notify(new CarAssigned($car,$this));
     }
+    public function deactivate(User $user)
+{
+    $this->active = false;
+    $this->save();
+
+    $this->notify(new UserDeactivated($user));
+}
+
 
 }
