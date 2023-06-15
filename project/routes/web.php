@@ -27,6 +27,12 @@ Route::resource('cars', CarController::class);
 //Route::get('/', [HomeController::class, 'index']);
 Route::get('/clients/{client}', [ClientController::class, 'show']);
 Route::get('/cars/{car}', [CarController::class, 'show'])->name('cars.show');
+Route::post('/clients', [ClientController::class, 'store'])->name('clients.store');
+Route::get('/clients/{client}', [ClientController::class, 'show'])->name('clients.show');
+Route::put('/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
+Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
+
+
 
 Route::get('/test', function () {
 
