@@ -22,7 +22,7 @@ use App\Models\Car;
 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CarController;
-
+use App\Http\Controllers\EmployeeController;
 Route::resource('cars', CarController::class);
 //Route::get('/', [HomeController::class, 'index']);
 Route::get('/clients/{client}', [ClientController::class, 'show']);
@@ -32,7 +32,10 @@ Route::get('/clients/{client}', [ClientController::class, 'show'])->name('client
 Route::put('/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
 Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
 
-
+Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
+Route::get('/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
+Route::put('/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
+Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
 
 Route::get('/test', function () {
 

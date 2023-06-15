@@ -18,6 +18,7 @@ class EmployeeFactory extends Factory
         return [
             'name' => $this->faker->name,
 
+
             // dodaj inne pola według potrzeb
         ];
     }
