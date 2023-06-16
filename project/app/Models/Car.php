@@ -11,18 +11,10 @@ class Car extends Model
     protected $guarded = [];
     // ...
 
-    public function users()
-    {
-        return $this->belongsToMany(User::class)
-                    ->withPivot('currently_using')
-                    ->withTimestamps();
-    }
-    public function clients()
-{
-    return $this->belongsToMany(Client::class, 'car_user')
-        ->withTimestamps()
-        ->withPivot('currently_using');
-}
 
+    public function client()
+{
+    return $this->belongsTo(Client::class);
+}
 }
 ?>
