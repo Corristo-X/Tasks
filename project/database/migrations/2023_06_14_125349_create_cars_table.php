@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('brand');
             $table->string('model');
             $table->string('year');
+            $table->foreignId('client_id')->constrained()->onDelete('cascade');
+           $table->boolean('currently_using')->default(false);
             $table->timestamps();
         });
     }

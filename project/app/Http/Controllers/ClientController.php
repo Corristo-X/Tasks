@@ -13,41 +13,41 @@ use Illuminate\Http\Request;
 class ClientController extends Controller
 {
 
-/*
-    public function index()
+    /*
+        public function index()
+        {
+            try {
+                $clients = Client::paginate(10);
+                return response()->json($clients);
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+        }
+    */
+    public function index(Request $request)
     {
         try {
-            $clients = Client::paginate(10);
+            $query = Client::query();
+
+            // Filtracja
+            $filterField = $request->query('filter_field');
+            $filterValue = $request->query('filter_value');
+
+            if ($filterField && $filterValue) {
+                $query->where($filterField, 'like', '%' . $filterValue . '%');
+            }
+
+            // Sortowanie
+            $sortField = $request->query('sort', 'name');
+            $sortDirection = $request->query('direction', 'asc');
+            $query->orderBy($sortField, $sortDirection);
+
+            $clients = $query->paginate(10);
             return response()->json($clients);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-*/
-public function index(Request $request)
-{
-    try {
-        $query = Client::query();
-
-        // Filtracja
-        $filterField = $request->query('filter_field');
-        $filterValue = $request->query('filter_value');
-
-        if ($filterField && $filterValue) {
-            $query->where($filterField, 'like', '%' . $filterValue . '%');
-        }
-
-        // Sortowanie
-        $sortField = $request->query('sort', 'name');
-        $sortDirection = $request->query('direction', 'asc');
-        $query->orderBy($sortField, $sortDirection);
-
-        $clients = $query->paginate(10);
-        return response()->json($clients);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
-}
 
 
 
@@ -112,6 +112,8 @@ public function index(Request $request)
             'cars.*.year' => 'required|date_format:Y',
             'orders.*.products.*.name' => 'required|string',
             'orders.*.products.*.price' => 'required|numeric',
+            'cars.*.currently_using' => 'required|boolean',
+
         ]);
         // aktualizacja samochodów i ich relacji z klientem
         foreach ($request->input('cars') as $carData) {
@@ -124,7 +126,8 @@ public function index(Request $request)
 
                 // aktualizacja danych samochodu
                 $car->update($updateCarData);
-
+                // dodanie aktualizacji 'currently_using'
+                $updateCarData['currently_using'] = $carData['currently_using'];
                 // aktualizacja relacji z klientem
                 if (isset($carData['pivot'])) {
                     $pivotData = $carData['pivot'];
