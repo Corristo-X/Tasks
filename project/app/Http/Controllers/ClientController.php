@@ -9,8 +9,36 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-    /*
-    public function show($clientId)
+
+
+    public function index()
+    {
+        try {
+            $clients = Client::all();
+            return response()->json($clients);
+        } catch(\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:clients',
+            'employee_id' => 'required|exists:employees,id',
+            // możesz dodać tutaj dodatkowe reguły walidacji, jeżeli są potrzebne
+        ]);
+
+        $client = new Client();
+        $client->name = $request->name;
+        $client->email = $request->email;
+        $client->employee_id = $request->employee_id;  // Przypisujemy pracownika do klienta
+        $client->save();
+
+        return response()->json(['message' => 'Client created successfully'], 201);
+    }
+   /* public function showclients($clientId)
     {
         $client = Client::with(['employee', 'orders'])->find($clientId);
 
@@ -37,27 +65,23 @@ class ClientController extends Controller
         }
     }
     */
-    public function store(Request $request)
+    public function show($id)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:clients',
-            'employee_id' => 'required|exists:employees,id',
-            // możesz dodać tutaj dodatkowe reguły walidacji, jeżeli są potrzebne
-        ]);
+        $client = Client::with('employee', 'orders.products','cars')->find($id);
 
-        $client = new Client();
-        $client->name = $request->name;
-        $client->email = $request->email;
-        $client->employee_id = $request->employee_id;  // Przypisujemy pracownika do klienta
-        $client->save();
+        if ($client) {
+            // obliczanie totalSpent dla klienta
+            $client->totalSpent = $client->orders->reduce(function ($carry, $order) {
+                return $carry + $order->totalCost;
+            }, 0);
 
-        return response()->json(['message' => 'Client created successfully'], 201);
+            return response()->json($client);
+        }
+
+        return response()->json(['error' => 'Client not found'], 404);
     }
-    public function show(Client $client)
-{
-    return view('clients.show', ['client' => $client]);
-}
+
+
 public function update(Request $request, Client $client)
 {
     // Walidacja danych żądania (jeśli jest potrzebna)

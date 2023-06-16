@@ -17,5 +17,12 @@ class Car extends Model
                     ->withPivot('currently_using')
                     ->withTimestamps();
     }
+    public function clients()
+{
+    return $this->belongsToMany(Client::class, 'car_user')
+        ->withTimestamps()
+        ->withPivot('currently_using');
+}
+
 }
 ?>
