@@ -21,8 +21,34 @@ class ClientController extends Controller
         }
     }
 
+
     public function store(Request $request)
     {
+        // Walidacja danych wejściowych
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|email',
+            // inne pola walidacji
+        ]);
+
+        // Przypisanie pracownika do klienta
+        $employee = Employee::whereDoesntHave('clients')->first();
+
+        if (!$employee) {
+            return response()->json(['error' => 'Brak dostępnych pracowników'], 400);
+        }
+
+        // Tworzenie nowego klienta w bazie danych
+        $client = new Client($validatedData);
+        $client->employee_id = $employee->id;
+        $client->save();
+
+        return response()->json($client, 201);
+    }
+
+
+
+        /*
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:clients',
@@ -37,34 +63,8 @@ class ClientController extends Controller
         $client->save();
 
         return response()->json(['message' => 'Client created successfully'], 201);
-    }
-   /* public function showclients($clientId)
-    {
-        $client = Client::with(['employee', 'orders'])->find($clientId);
+        */
 
-        // Wypisz informacje na temat klienta
-        echo 'Imię klienta: ' . $client->name;
-        echo 'Adres e-mail klienta: ' . $client->email;
-
-        // Informacje na temat pracownika przypisanego do klienta
-        $employee = $client->employee;
-        echo 'Pracownik przypisany do klienta: ' . $employee->name;
-
-        // Zamówienia
-        $orders = $client->orders;
-
-        echo 'Ostatnie zamówienia klienta: ';
-        foreach($orders as $order) {
-            echo 'Id zamówienia: ' . $order->id;
-            echo 'Data zamówienia: ' . $order->created_at;
-            // Wypiszemy tutaj również informacje na temat produktów w zamówieniu
-            foreach($order->products as $product) {
-                echo 'Nazwa produktu: ' . $product->name;
-                echo 'Cena produktu: ' . $product->price;
-            }
-        }
-    }
-    */
     public function show($id)
     {
         $client = Client::with('employee', 'orders.products','cars')->find($id);
