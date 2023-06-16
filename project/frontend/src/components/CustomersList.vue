@@ -1,9 +1,19 @@
 <template>
     <div>
         <h2>Lista klientów</h2>
+        <div>
+            <label for="filterField">Pole filtru:</label>
+            <select v-model="filterField" id="filterField">
+                <option value="name">Nazwa</option>
+                <option value="email">E-mail</option>
+
+            </select>
+            <input v-model="filterValue" type="text" placeholder="Wartość filtra">
+            <button @click="applyFilter">Filtruj</button>
+        </div>
         <ul>
             <li v-for="client in clientsResponse.data" :key="client.id">
-                <router-link :to="{ name: 'ClientDetails', query: { id: client.id } }">{{ client.name }}</router-link>
+                <router-link :to="{ name: 'ClientDetails', query: { id: client.id } }">{{ client.name }}- {{ client.email }}</router-link>
             </li>
         </ul>
         <button @click="sortClients('name')">Sortuj według nazwy</button>
@@ -11,21 +21,6 @@
         <button @click="previousPage" :disabled="clientsResponse.current_page === 1">Poprzednia strona</button>
         <button @click="nextPage" :disabled="clientsResponse.current_page === clientsResponse.last_page">Następna
             strona</button>
-
-        <h2>Szczegóły klienta</h2>
-        <div v-if="selectedClient && selectedClient.id">
-            <h3>{{ selectedClient.name }}</h3>
-            <p>Pracownik przypisany: {{ selectedClient.employee.name }}</p>
-            <p>Ostatnio kupione rzeczy:</p>
-            <ul>
-                <li v-for="order in selectedClient.orders" :key="order.id">{{ order.item }}</li>
-            </ul>
-            <p>Łączna kwota wydana: {{ selectedClient.totalSpent }}</p>
-            <p>Posiadane samochody:</p>
-            <ul>
-                <li v-for="car in selectedClient.cars" :key="car.id">{{ car.name }}</li>
-            </ul>
-        </div>
     </div>
 </template>
 
@@ -39,20 +34,25 @@ export default {
             clientsResponse: {},
             selectedClient: null,
             currentSort: 'name',
-            currentDirection: 'asc'
+            currentDirection: 'asc',
+            filterField: 'name',
+            filterValue: ''
         };
     },
     methods: {
         fetchClients(page = 1) {
-            axios.get(`http://localhost:8000/clients?page=${page}&sort=${this.currentSort}&direction=${this.currentDirection}`)
-                .then(response => {
+            let url = `http://localhost:8000/clients?page=${page}&sort=${this.currentSort}&direction=${this.currentDirection}`;
+            if (this.filterField && this.filterValue) {
+                url += `&filter_field=${this.filterField}&filter_value=${this.filterValue}`;
+            }
 
+            axios.get(url)
+                .then(response => {
                     this.clientsResponse = response.data;
                 })
                 .catch(error => {
                     console.log(error);
                 });
-
         },
         sortClients(sortField) {
             if (this.currentSort === sortField) {
@@ -73,7 +73,9 @@ export default {
                 this.fetchClients(this.clientsResponse.current_page + 1);
             }
         },
-
+        applyFilter() {
+            this.fetchClients();
+        },
 
 
     },
