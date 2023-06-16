@@ -13,16 +13,33 @@ use Illuminate\Http\Request;
 class ClientController extends Controller
 {
 
-
+/*
     public function index()
     {
         try {
-            $clients = Client::all();
+            $clients = Client::paginate(10);
             return response()->json($clients);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+*/
+public function index(Request $request)
+{
+    try {
+        $query = Client::query();
+
+        // Sortowanie
+        $sortField = $request->query('sort', 'name');
+        $sortDirection = $request->query('direction', 'asc');
+        $query->orderBy($sortField, $sortDirection);
+
+        $clients = $query->paginate(10);
+        return response()->json($clients);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
 
 
     public function store(Request $request)
