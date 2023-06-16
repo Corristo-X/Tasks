@@ -25,10 +25,9 @@ use App\Http\Controllers\CarController;
 use App\Http\Controllers\EmployeeController;
 Route::resource('cars', CarController::class);
 Route::get('/clients', [ClientController::class,'index']);
-//Route::get('/', [HomeController::class, 'index']);
-//Route::get('/clients', [ClientController::class, 'showclients']);
+
 Route::get('/clients/{id}', [ClientController::class, 'show']);
-//Route::get('/clients/{client}', [ClientController::class, 'show']);
+
 Route::get('/cars/{car}', [CarController::class, 'show'])->name('cars.show');
 Route::post('/clients', [ClientController::class, 'store'])->name('clients.store');
 Route::get('/clients/{client}', [ClientController::class, 'show'])->name('clients.show');
