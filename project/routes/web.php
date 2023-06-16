@@ -27,12 +27,13 @@ Route::resource('cars', CarController::class);
 Route::get('/clients', [ClientController::class,'index']);
 
 Route::get('/clients/{id}', [ClientController::class, 'show']);
+Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
 
 Route::get('/cars/{car}', [CarController::class, 'show'])->name('cars.show');
 Route::post('/clients', [ClientController::class, 'store'])->name('clients.store');
 Route::get('/clients/{client}', [ClientController::class, 'show'])->name('clients.show');
 Route::put('/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
-Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
+//Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
 
 Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
 Route::get('/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
