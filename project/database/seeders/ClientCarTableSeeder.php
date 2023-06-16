@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Car;
-use App\Models\User;
+use App\Models\Client;
 
-class UserCarTableSeeder extends Seeder
+class ClientCarTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,12 +15,12 @@ class UserCarTableSeeder extends Seeder
      */
     public function run()
     {
-        $users = User::all();
+        $clients = Client::all();
         $cars = Car::all();
 
-        // for each user, attach random cars
-        foreach ($users as $user) {
-            $user->cars()->attach(
+        // for each client, attach random cars
+        foreach ($clients as $client) {
+            $client->cars()->attach(
                 $cars->random(rand(1, 3))->pluck('id')->toArray(),
                 ['currently_using' => rand(0, 1)]
             );

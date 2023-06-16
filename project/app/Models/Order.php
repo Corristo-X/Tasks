@@ -20,5 +20,9 @@ class Order extends Model
     {
         return $this->belongsToMany(Product::class);  // Zakładam, że masz tabelę `order_product` do obsługi relacji wiele do wielu
     }
+    public function getTotalCostAttribute()
+    {
+        return $this->products->sum('cost');
+    }
 }
 ?>

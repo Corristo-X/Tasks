@@ -20,5 +20,12 @@ class Client extends Model
     {
         return $this->hasMany(Order::class);
     }
+    public function cars()
+{
+    return $this->belongsToMany(Car::class, 'car_user')
+        ->withTimestamps()
+        ->withPivot('currently_using');
+}
+
 }
 ?>
