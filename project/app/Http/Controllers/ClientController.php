@@ -29,6 +29,14 @@ public function index(Request $request)
     try {
         $query = Client::query();
 
+        // Filtracja
+        $filterField = $request->query('filter_field');
+        $filterValue = $request->query('filter_value');
+
+        if ($filterField && $filterValue) {
+            $query->where($filterField, 'like', '%' . $filterValue . '%');
+        }
+
         // Sortowanie
         $sortField = $request->query('sort', 'name');
         $sortDirection = $request->query('direction', 'asc');
@@ -40,6 +48,7 @@ public function index(Request $request)
         return response()->json(['error' => $e->getMessage()], 500);
     }
 }
+
 
 
     public function store(Request $request)
