@@ -1,0 +1,10 @@
+arrA.filter(x => !arrB.includes(x)).concat(arrB.filter(x => !arrA.includes(x)))
+
+// Najpierw znajdujemy elementy, które są w arrA, ale nie w arrB
+let uniqueToA = arrA.filter(element => !arrB.includes(element));
+
+// Następnie znajdujemy elementy, które są w arrB, ale nie w arrA
+let uniqueToB = arrB.filter(element => !arrA.includes(element));
+
+// Na koniec łączymy obie tablice, aby uzyskać ostateczną odpowiedź
+let symmetricDifference = uniqueToA.concat(uniqueToB);
