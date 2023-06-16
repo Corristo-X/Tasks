@@ -91,13 +91,28 @@ public function update(Request $request, Client $client)
 
     return response()->json(['message' => 'Client updated successfully'], 200);
 }
-public function destroy(Client $client)
+public function destroy($id)
+{
+    $client = Client::find($id);
+
+    if (!$client) {
+        return response()->json(['error' => 'Klient nie został znaleziony'], 404);
+    }
+
+    foreach ($client->orders as $order) {
+        $order->delete();
+    }
+    $client->delete();
+    return response()->json(['message' => 'Klient został pomyślnie usunięty'], 200);
+}
+
+/*public function destroy(Client $client)
 {
     $client->delete();
 
     return response()->json(['message' => 'Client deleted successfully'], 200);
 }
-
+*/
 
 
 

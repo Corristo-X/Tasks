@@ -1,5 +1,9 @@
 <template>
     <div>
+        <head>
+            <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        </head>
       <h1>Strona główna</h1>
       <ul>
         <li><router-link to="/clients">Lista klientów</router-link></li>

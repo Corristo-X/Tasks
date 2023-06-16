@@ -1,5 +1,11 @@
 <template>
+
     <div id="app">
+    <head>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    </head>
+
       <img alt="Vue logo" src="./assets/logo.png">
       <HomePage/>
       <router-view></router-view>
