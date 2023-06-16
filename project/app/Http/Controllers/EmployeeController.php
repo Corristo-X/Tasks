@@ -15,6 +15,15 @@ class EmployeeController extends Controller
 
         return response()->json(['message' => 'Employee created successfully'], 201);
     }
+    public function index()
+    {
+        try {
+            $Employees = Employee::all();
+            return response()->json($Employees);
+        } catch(\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 
     public function show(Employee $employee)
     {

@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Car;
+use App\Models\Product;
 use App\Models\Employee;
 use App\Models\Order;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -16,7 +19,7 @@ class ClientController extends Controller
         try {
             $clients = Client::all();
             return response()->json($clients);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -47,27 +50,9 @@ class ClientController extends Controller
     }
 
 
-
-        /*
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:clients',
-            'employee_id' => 'required|exists:employees,id',
-            // możesz dodać tutaj dodatkowe reguły walidacji, jeżeli są potrzebne
-        ]);
-
-        $client = new Client();
-        $client->name = $request->name;
-        $client->email = $request->email;
-        $client->employee_id = $request->employee_id;  // Przypisujemy pracownika do klienta
-        $client->save();
-
-        return response()->json(['message' => 'Client created successfully'], 201);
-        */
-
     public function show($id)
     {
-        $client = Client::with('employee', 'orders.products','cars')->find($id);
+        $client = Client::with('employee', 'orders.products', 'cars')->find($id);
 
         if ($client) {
             // obliczanie totalSpent dla klienta
@@ -82,37 +67,96 @@ class ClientController extends Controller
     }
 
 
-public function update(Request $request, Client $client)
-{
-    // Walidacja danych żądania (jeśli jest potrzebna)
+    public function update(Request $request, $id)
+    {
+        $client = Client::find($id);
 
-    // Aktualizacja danych klienta
-    $client->update($request->all());
+        if (!$client) {
+            return response()->json(['error' => 'Klient nie został znaleziony'], 404);
+        }
 
-    return response()->json(['message' => 'Client updated successfully'], 200);
-}
-public function destroy($id)
-{
-    $client = Client::find($id);
+        // walidacja danych z żądania
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'employee_id' => 'required|integer|exists:employees,id',
+            // upewniamy się, że pracownik istnieje
+            'cars.*.brand' => 'required|string',
+            'cars.*.model' => 'required|string',
+            'cars.*.year' => 'required|date_format:Y',
+            'orders.*.products.*.name' => 'required|string',
+            'orders.*.products.*.price' => 'required|numeric',
+        ]);
+        // aktualizacja samochodów i ich relacji z klientem
+        foreach ($request->input('cars') as $carData) {
+            $car = Car::find($carData['id']);
+            if ($car) {
+                // tworzenie kopii danych do zaktualizowania samochodu
+                $updateCarData = $carData;
+                // usunięcie 'pivot' z danych samochodu
+                unset($updateCarData['pivot']);
 
-    if (!$client) {
-        return response()->json(['error' => 'Klient nie został znaleziony'], 404);
+                // aktualizacja danych samochodu
+                $car->update($updateCarData);
+
+                // aktualizacja relacji z klientem
+                if (isset($carData['pivot'])) {
+                    $pivotData = $carData['pivot'];
+
+                    // konwersja dat do prawidłowego formatu
+                    if (isset($pivotData['created_at'])) {
+                        $pivotData['created_at'] = Carbon::parse($pivotData['created_at']);
+                    }
+
+                    if (isset($pivotData['updated_at'])) {
+                        $pivotData['updated_at'] = Carbon::now();
+                    }
+
+                    $client->cars()->updateExistingPivot($car->id, $pivotData);
+                }
+
+            }
+        }
+
+
+
+        // aktualizacja zamówień i produktów
+        foreach ($request->input('orders') as $orderData) {
+            $order = Order::find($orderData['id']);
+            if ($order) {
+                $order->update($orderData);
+
+                foreach ($orderData['products'] as $productData) {
+                    $product = Product::find($productData['id']);
+                    if ($product) {
+                        $product->update($productData);
+                    }
+                }
+            }
+        }
+
+        // aktualizacja danych klienta
+        $client->update($validatedData);
+
+        return response()->json(['message' => 'Klient został pomyślnie zaktualizowany'], 200);
     }
 
-    foreach ($client->orders as $order) {
-        $order->delete();
+    public function destroy($id)
+    {
+        $client = Client::find($id);
+
+        if (!$client) {
+            return response()->json(['error' => 'Klient nie został znaleziony'], 404);
+        }
+
+        foreach ($client->orders as $order) {
+            $order->delete();
+        }
+        $client->delete();
+        return response()->json(['message' => 'Klient został pomyślnie usunięty'], 200);
     }
-    $client->delete();
-    return response()->json(['message' => 'Klient został pomyślnie usunięty'], 200);
-}
 
-/*public function destroy(Client $client)
-{
-    $client->delete();
 
-    return response()->json(['message' => 'Client deleted successfully'], 200);
-}
-*/
 
 
 
