@@ -168,6 +168,9 @@ class ClientController extends Controller
         $client->update($validatedData);
 
         return response()->json(['message' => 'Klient został pomyślnie zaktualizowany'], 200);
+     //   $request->session()->flash('success', 'Klient został pomyślnie zaktualizowany');
+      //  return response()->json(['message' => 'Klient został pomyślnie zaktualizowany'], 200);
+
     }
 
     public function destroy($id)
