@@ -38,28 +38,101 @@ class ClientTest extends TestCase
 
     public function test_show_client()
     {
+        // Tworzenie klienta
         $client = Client::factory()->create();
 
+        // Wywołanie metody wyświetlającej klienta
         $response = $this->get(route('clients.show', $client->id));
 
-        $response->assertStatus(200);
-        $response->assertViewHas('client');
+        // Sprawdzenie odpowiedzi
+        $response->assertStatus(200)
+            ->assertJson([
+                'id' => $client->id,
+                'name' => $client->name,
+                'email' => $client->email,
+                // Dodaj pozostałe oczekiwane pola klienta
+            ]);
     }
+
 
     public function test_update_client()
-    {
-        $client = Client::factory()->create();
-        $updatedData = [
-            'name' => $this->faker->name,
-            'email' => $this->faker->unique()->safeEmail,
+{
+    // Tworzenie klienta
+    $client = Client::factory()->create();
 
-        ];
+    // Generowanie danych do aktualizacji
+    $updatedData = [
+        'name' => $this->faker->name,
+        'email' => $this->faker->unique()->safeEmail,
+        'employee_id' => 1, // ID istniejącego pracownika
+        'cars' => [
+            [
+                'id' => 1, // ID istniejącego samochodu klienta
+                'brand' => $this->faker->randomElement(['Toyota', 'Ford', 'BMW']),
+                'model' => $this->faker->word,
+                'year' => $this->faker->year,
+                'currently_using' => $this->faker->boolean,
+            ],
+        ],
+        'orders' => [
+            [
+                'id' => 1, // ID istniejącego zamówienia klienta
+                'products' => [
+                    [
+                        'id' => 1, // ID istniejącego produktu w zamówieniu
+                        'name' => $this->faker->word,
+                        'price' => $this->faker->randomFloat(2, 1, 100),
+                    ],
+                ],
+            ],
+        ],
+    ];
 
-        $response = $this->put(route('clients.update', $client->id), $updatedData);
+    // Wywołanie metody aktualizacji
+    $response = $this->put(route('clients.update', $client->id), $updatedData);
 
-        $response->assertStatus(200);
-        $this->assertDatabaseHas('clients', $updatedData);
+    // Sprawdzenie odpowiedzi
+    $response->assertRedirect(url('clients/' . $client->id));
+
+    // Sprawdzenie aktualizacji danych w bazie danych
+    $this->assertDatabaseHas('clients', [
+        'id' => $client->id,
+        'name' => $updatedData['name'],
+        'email' => $updatedData['email'],
+        // Dodaj pozostałe pola, które chcesz sprawdzić
+    ]);
+
+    // Sprawdzenie aktualizacji samochodów
+    foreach ($updatedData['cars'] as $carData) {
+        $this->assertDatabaseHas('cars', [
+            'id' => $carData['id'],
+            'brand' => $carData['brand'],
+            'model' => $carData['model'],
+            'year' => $carData['year'],
+            'currently_using' => $carData['currently_using'],
+        ]);
     }
+
+    // Sprawdzenie aktualizacji zamówień i produktów
+    foreach ($updatedData['orders'] as $orderData) {
+        $this->assertDatabaseHas('orders', [
+            'id' => $orderData['id'],
+            // Dodaj pozostałe pola, które chcesz sprawdzić
+        ]);
+
+        foreach ($orderData['products'] as $productData) {
+            $this->assertDatabaseHas('products', [
+                'id' => $productData['id'],
+                'name' => $productData['name'],
+                'price' => $productData['price'],
+                // Dodaj pozostałe pola, które chcesz sprawdzić
+            ]);
+        }
+    }
+}
+
+
+
 
     public function test_delete_client()
     {

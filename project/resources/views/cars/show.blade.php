@@ -14,7 +14,7 @@
     <div class="container">
         <h1>Car Details</h1>
 
-        <p>Make: {{ $car->make }}</p>
+        <p>Make: {{ $car->brand }}</p>
         <p>Model: {{ $car->model }}</p>
         <p>Year: {{ $car->year }}</p>
 

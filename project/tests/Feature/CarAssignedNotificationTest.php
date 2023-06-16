@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Models\Client;
 use App\Models\Car;
 use App\Notifications\CarAssigned;
 use Illuminate\Support\Facades\Notification;
@@ -16,13 +16,13 @@ class CarAssignedNotificationTest extends TestCase
 
          // Notification::fake();
 
-            $user = User::factory()->create();
+            $Client = Client::factory()->create();
             $car = Car::factory()->create();
 
-            $user->assignCar($car);
+            $Client->assignCar($car);
 
             Notification::assertSentTo(
-                $user,
+                $Client,
                 CarAssigned::class,
                 function ($notification, $channels) use ($car) {
                     return $notification->getCar()->id === $car->id;
