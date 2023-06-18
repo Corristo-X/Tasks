@@ -24,6 +24,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\EmployeeController;
 Route::get('/clients', [ClientController::class,'index']);
+Route::get('/clients/all', [ClientController::class,'getAllClients']);
 Route::get('/clients/{id}', [ClientController::class, 'show'])->name('clients.show');
 Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
 Route::put('/clients/{id}', [ClientController::class, 'update'])->name('clients.update');
@@ -37,7 +38,7 @@ Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
 Route::get('/cars/{id}', [CarController::class, 'show'])->name('cars.show');
 Route::put('/cars/{car}', [CarController::class, 'update'])->name('cars.update');
 Route::delete('/cars/{car}', [CarController::class, 'destroy'])->name('cars.destroy');
-
+Route::get('/cars/all', [CarController::class,'getAllCars']);
 
 
 Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');

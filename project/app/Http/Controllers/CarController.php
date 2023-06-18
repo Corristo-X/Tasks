@@ -6,14 +6,24 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Car;
 use App\Models\Client;
-use App\Notifications\CarAssigned;
+use App\Notifications\ClientAssignedToCar;
+
 
 class CarController extends Controller
 {
     public function index()
     {
         $cars = Car::all();
-        return view('cars.index', compact('cars'));
+        return response()->json($cars);
+    }
+    public function getAllCars()
+    {
+        try {
+            $cars = Car::all();
+            return response()->json($cars);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function store(Request $request)
@@ -27,6 +37,14 @@ class CarController extends Controller
         ]);
 
         $car = Car::create($validatedData);
+        $clientId = $validatedData['client_id']; // Pobierz wartość client_id z validatedData
+        $carId = $car->id; // Pobierz ID utworzonego samochodu
+
+        $client = Client::find($clientId);
+        $car = Car::find($carId);
+
+        $client->notify(new ClientAssignedToCar($car));
+
         return response()->json($car, 201);
     }
 
@@ -39,7 +57,13 @@ class CarController extends Controller
             'client_id' => 'required|exists:clients,id',
             'currently_using' => 'required|boolean',
         ]);
+        $clientId = $validatedData['client_id']; // Pobierz wartość client_id z validatedData
+        $carId = $car->id; // Pobierz ID utworzonego samochodu
 
+        $client = Client::find($clientId);
+        $car = Car::find($carId);
+
+        $client->notify(new ClientAssignedToCar($car));
         $car->update($validatedData);
         return response()->json($car, 200);
     }
@@ -61,20 +85,5 @@ class CarController extends Controller
         return response()->json(null, 200);
     }
 
-    public function assignCar(Request $request, $carId, $clientId)
-    {
-        $car = Car::find($carId);
-        $client = Client::find($clientId);
 
-        if (!$car || !$client) {
-            return redirect()->route('cars.index')->withErrors(['error' => 'Car or Client not found.']);
-        }
-
-        $client->car_id = $car->id;
-        $client->save();
-
-        $client->notify(new CarAssigned($car));
-
-        return redirect()->route('cars.index');
-    }
 }
