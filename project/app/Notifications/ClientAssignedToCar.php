@@ -1,6 +1,5 @@
 <?php
 namespace App\Notifications;
-// App\Notifications\ClientAssignedToCar.php
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,10 +11,12 @@ class ClientAssignedToCar extends Notification
     use Queueable;
 
     private $car;
+    private $clientId;
 
-    public function __construct($car)
+    public function __construct($car, $clientId)
     {
         $this->car = $car;
+        $this->clientId = $clientId;
     }
 
     public function via($notifiable)
@@ -30,7 +31,32 @@ class ClientAssignedToCar extends Notification
             'car_model' => $this->car->model,
             'car_brand' => $this->car->brand,
             'car_year' => $this->car->year,
+            'client_id' => $this->clientId,
             'message' => 'Zostales przypisany do nowego pojazdu.',
         ];
+    }
+    public function getCarId()
+    {
+        return $this->car->id;
+    }
+
+    public function getCarModel()
+    {
+        return $this->car->model;
+    }
+
+    public function getCarBrand()
+    {
+        return $this->car->brand;
+    }
+
+    public function getCarYear()
+    {
+        return $this->car->year;
+    }
+
+    public function getClientId()
+    {
+        return $this->clientId;
     }
 }

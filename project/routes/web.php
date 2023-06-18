@@ -23,6 +23,7 @@ use App\Models\Car;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\NotificationsController;
 Route::get('/clients', [ClientController::class,'index']);
 Route::get('/clients/all', [ClientController::class,'getAllClients']);
 Route::get('/clients/{id}', [ClientController::class, 'show'])->name('clients.show');
@@ -46,3 +47,6 @@ Route::get('/employees', [EmployeeController::class, 'index']);
 Route::get('/employees/{id}', [EmployeeController::class, 'show'])->name('employees.show');
 Route::put('/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
 Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+
+Route::get('/notifications', [NotificationsController::class, 'index'])->name('notifications.index');
+

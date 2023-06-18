@@ -4,6 +4,7 @@ import CustomersList from '../components/CustomersList.vue';
 import ClientDetails from '../components/ClientDetails.vue';
 import ClientForm from '../components/ClientForm.vue';
 import CarForm from '../components/CarForm.vue';
+import NotificationsPage from '../components/NotificationsPage';
 //import Cars from '../views/Cars.vue';
 //import Employees from '../views/Employees.vue';
 
@@ -23,25 +24,17 @@ const routes = [
     path:'/clientform',
     name:'ClientForm',
     component:ClientForm,
-
   },
   {
     path:'/carform',
     name:'CarForm',
     component:CarForm,
-
-  }
-  /*{
-    path: '/cars',
-    name: 'Cars',
-    component: Cars,
   },
   {
-    path: '/employees',
-    name: 'Employees',
-    component: Employees,
-  },
-  */
+    path:'/notifications',
+    name:'NotificationsPage',
+    component:NotificationsPage,
+  }
 ];
 
 const router = createRouter({
