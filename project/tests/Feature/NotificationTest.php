@@ -19,20 +19,53 @@ class NotificationTest extends TestCase
 
     public function testClientAssignedToCarNotification()
     {
-        Notification::fake();
+        // Create a client
         Employee::factory()->create();
         $client = Client::factory()->create();
-       $car = Car::factory()->create();
-      //$car = Car::factory()->create(['client_id' => $client->id]);
-        // Przypisujesz samochód do klienta
-        $client->cars()->save($car);
 
-        $client->notify(new ClientAssignedToCar($car));
+        // Create a car assigned to the client
+        $car = Car::factory()->create([
+            'client_id' => $client->id,
+            'model' => 'Car Model',
+            'brand' => 'Car Brand',
+            'year' => 2023,
+        ]);
 
+        // Assign the client to the car
+        $notification = new ClientAssignedToCar($car, $client->id);
+        $notifiable = $client;
+
+        // Assert that the notification is sent via the "database" channel
+        $this->assertEquals(['database'], $notification->via($notifiable));
+
+        // Assert the database notification data
+        $expectedData = [
+            'car_id' => $car->id,
+            'car_model' => $car->model,
+            'car_brand' => $car->brand,
+            'car_year' => $car->year,
+            'client_id' => $client->id,
+            'message' => 'Zostales przypisany do nowego pojazdu.',
+        ];
+        $this->assertEquals($expectedData, $notification->toDatabase($notifiable));
+
+        // Send the notification
+        Notification::fake();
+        $notifiable->notify($notification);
+
+        // Assert that the notification was sent to the notifiable
         Notification::assertSentTo(
-            [$client], ClientAssignedToCar::class
+            $notifiable,
+            ClientAssignedToCar::class,
+            function ($notification, $channels, $notifiable) use ($expectedData) {
+                // Assert the notification data
+                $this->assertEquals($expectedData, $notification->toDatabase($notifiable));
+
+                return true;
+            }
         );
     }
+
 
     public function testClientDeactivatedNotification()
     {

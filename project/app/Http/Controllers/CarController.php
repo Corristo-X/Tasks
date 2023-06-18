@@ -43,7 +43,7 @@ class CarController extends Controller
         $client = Client::find($clientId);
         $car = Car::find($carId);
 
-        $client->notify(new ClientAssignedToCar($car));
+        $client->notify(new ClientAssignedToCar($car,$clientId));
 
         return response()->json($car, 201);
     }
@@ -63,7 +63,7 @@ class CarController extends Controller
         $client = Client::find($clientId);
         $car = Car::find($carId);
 
-        $client->notify(new ClientAssignedToCar($car));
+        $client->notify(new ClientAssignedToCar($car,$clientId));
         $car->update($validatedData);
         return response()->json($car, 200);
     }

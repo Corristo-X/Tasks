@@ -9,6 +9,7 @@
         <li><router-link to="/clients">Lista klientów</router-link></li>
         <li><router-link to="/clientform">Dodawanie klientow</router-link></li>
         <li><router-link to="/carform">Dodawanie samochodów</router-link></li>
+        <li><router-link to="/notifications">Powiadomienia</router-link></li>
       </ul>
     </div>
   </template>

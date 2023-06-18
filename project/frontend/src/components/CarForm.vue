@@ -26,7 +26,7 @@
       <input v-model="currentlyUsing" type="checkbox"> Czy obecnie używany?
 
       <!-- Przycisk dodawania samochodu -->
-      <button type="submit" :disabled="!selectedClient">Dodaj samochód ręcznie</button>
+      <button type="submit" :disabled="!selectedClient">Dodaj samochód </button>
       <p v-if="selectedCar">
       Wybrany samochód zostanie przypisany do klienta.
     </p>
