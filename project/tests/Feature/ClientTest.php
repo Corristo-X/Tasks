@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Client;
+use App\Models\Car;
 use App\Models\Employee;
+use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -58,16 +61,20 @@ class ClientTest extends TestCase
     public function test_update_client()
 {
     // Tworzenie klienta
+    $employee = Employee::factory()->create();
     $client = Client::factory()->create();
+    $car = Car::factory()->create();
+    $order = Order::factory()->create();
+    $product = Product::factory()->create();
 
     // Generowanie danych do aktualizacji
     $updatedData = [
         'name' => $this->faker->name,
         'email' => $this->faker->unique()->safeEmail,
-        'employee_id' => 1, // ID istniejącego pracownika
+        'employee_id' => $employee->id,
         'cars' => [
             [
-                'id' => 1, // ID istniejącego samochodu klienta
+                'id' => $car->id, // ID istniejącego samochodu klienta
                 'brand' => $this->faker->randomElement(['Toyota', 'Ford', 'BMW']),
                 'model' => $this->faker->word,
                 'year' => $this->faker->year,
@@ -76,10 +83,10 @@ class ClientTest extends TestCase
         ],
         'orders' => [
             [
-                'id' => 1, // ID istniejącego zamówienia klienta
+                'id' => $order->id, // ID istniejącego zamówienia klienta
                 'products' => [
                     [
-                        'id' => 1, // ID istniejącego produktu w zamówieniu
+                        'id' => $product->id, // ID istniejącego produktu w zamówieniu
                         'name' => $this->faker->word,
                         'price' => $this->faker->randomFloat(2, 1, 100),
                     ],
@@ -92,7 +99,9 @@ class ClientTest extends TestCase
     $response = $this->put(route('clients.update', $client->id), $updatedData);
 
     // Sprawdzenie odpowiedzi
-    $response->assertRedirect(url('clients/' . $client->id));
+    $response->assertStatus(200)
+    ->assertJson(['message' => 'Klient został pomyślnie zaktualizowany']);
+
 
     // Sprawdzenie aktualizacji danych w bazie danych
     $this->assertDatabaseHas('clients', [
