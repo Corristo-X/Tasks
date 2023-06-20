@@ -24,12 +24,12 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\NotificationsController;
+use App\Http\Controllers\AuthController;
 Route::get('/clients', [ClientController::class,'index']);
 Route::get('/clients/all', [ClientController::class,'getAllClients']);
 Route::get('/clients/{id}', [ClientController::class, 'show'])->name('clients.show');
 Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
 Route::put('/clients/{id}', [ClientController::class, 'update'])->name('clients.update');
-
 Route::post('/clients', [ClientController::class, 'store'])->name('clients.store');
 Route::get('/clients/{client}', [ClientController::class, 'show'])->name('clients.show');
 
@@ -50,3 +50,5 @@ Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])->
 
 Route::get('/notifications', [NotificationsController::class, 'index'])->name('notifications.index');
 
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');

@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Notifications\CarAssigned;
 use App\Notifications\UserDeactivated;
 
 class User extends Authenticatable
@@ -44,21 +43,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-    public function cars()
-    {
-        return $this->belongsToMany(Car::class)
-                    ->withPivot('currently_using')
-                    ->withTimestamps();
-    }
-    public function assignCar(Car $car)
-    {
-        // Zakładam, że w tabeli users masz kolumnę car_id do przechowywania przypisanego samochodu
-        $this->car_id = $car->id;
-        $this->save();
 
-        // Wysyłanie notyfikacji
-        $this->notify(new CarAssigned($car,$this));
-    }
+
     public function deactivate(User $user)
 {
     $this->active = false;

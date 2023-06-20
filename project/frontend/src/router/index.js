@@ -5,6 +5,8 @@ import ClientDetails from '../components/ClientDetails.vue';
 import ClientForm from '../components/ClientForm.vue';
 import CarForm from '../components/CarForm.vue';
 import NotificationsPage from '../components/NotificationsPage';
+
+
 //import Cars from '../views/Cars.vue';
 //import Employees from '../views/Employees.vue';
 
@@ -34,7 +36,7 @@ const routes = [
     path:'/notifications',
     name:'NotificationsPage',
     component:NotificationsPage,
-  }
+  },
 ];
 
 const router = createRouter({
