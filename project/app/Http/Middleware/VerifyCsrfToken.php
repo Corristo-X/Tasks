@@ -14,6 +14,8 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         'http://localhost:8000/clients',
         'http://localhost:8000/cars',
+        'http://localhost:8000/login',
+        'http://localhost:8000/logout',
         'http://localhost:8000/cars/*',
         '/clients/*',
 
