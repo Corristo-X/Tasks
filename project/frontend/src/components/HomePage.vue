@@ -7,6 +7,8 @@
         </head>
         <div>
             <h1 v-if="name">Zalogowany użytkownik: {{ name }}</h1>
+
+            <div v-if="error" class="error">{{ error }}</div>
         </div>
         <div>
         <label>Email:</label>
@@ -28,7 +30,7 @@
             <li><router-link to="/clientform">Dodawanie klientow</router-link></li>
             <li><router-link to="/carform">Dodawanie samochodów</router-link></li>
             <li><router-link to="/notifications">Powiadomienia</router-link></li>
-
+            <li><router-link to="/useractivationmanager">Menedżer aktywacji użytkownika</router-link></li>
         </ul>
     </div>
 </template>
@@ -42,12 +44,17 @@ export default {
         return {
             email: '',
             password: '',
+            error:null,
         };
     },
     computed: {
+        userId() {
+    return useAuthStore().user ? useAuthStore().user.id : null;
+  },
         name() {
             return useAuthStore().name
         },
+
         // Dodaj computed property do wyświetlania nazwy zalogowanego użytkownika
 
     },
@@ -69,6 +76,7 @@ export default {
 
             } catch (error) {
                 if (error.response) {
+                    this.error = error.response.data.error;
                     console.error(error.response.data);
                 } else if (error.request) {
                     console.error(error.request);

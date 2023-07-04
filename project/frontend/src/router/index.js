@@ -5,7 +5,8 @@ import ClientDetails from '../components/ClientDetails.vue';
 import ClientForm from '../components/ClientForm.vue';
 import CarForm from '../components/CarForm.vue';
 import NotificationsPage from '../components/NotificationsPage';
-
+import UserActivationManager from '../components/UserActivationManager';
+import { useAuthStore } from '../store/auth'
 
 //import Cars from '../views/Cars.vue';
 //import Employees from '../views/Employees.vue';
@@ -33,9 +34,22 @@ const routes = [
     component:CarForm,
   },
   {
-    path:'/notifications',
-    name:'NotificationsPage',
-    component:NotificationsPage,
+    path: '/notifications',
+    component: NotificationsPage,
+    beforeEnter: (to, from, next) => {
+      const authStore = useAuthStore();
+      console.log(authStore.name);
+      if (!authStore.name) {
+        next('/clients');  // Jeżeli użytkownik nie jest zalogowany przekieruj go do strony logowania
+      } else {
+        next();  // Jeżeli użytkownik jest zalogowany pozwól mu wejść na stronę
+      }
+    },
+  },
+  {
+    path:'/useractivationmanager',
+    name:'UserActivationManager',
+    component:UserActivationManager,
   },
 ];
 

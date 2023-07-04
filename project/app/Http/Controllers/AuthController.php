@@ -14,12 +14,19 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
+
+            // sprawdzenie, czy użytkownik jest aktywny
+            if(!$user->is_active) {
+                return response()->json(['error' => 'Twoje konto zostało dezaktywowane'], 403);
+            }
+
             $token = $user->createToken('authToken')->plainTextToken;
-            return response()->json(['token' => $token,'name' => $user->name], 200);
+            return response()->json(['token' => $token,'name' => $user->name,'id'=>$user->id], 200);
         } else {
             return response()->json(['error' => 'Invalid credentials'], 401);
         }
     }
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
