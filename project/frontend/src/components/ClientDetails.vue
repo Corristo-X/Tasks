@@ -105,6 +105,7 @@ export default {
                     this.client.cars.forEach(car => {
                 car.currently_using = !!car.currently_using;
             });
+
                 })
                 .catch(error => {
                     console.log(error);

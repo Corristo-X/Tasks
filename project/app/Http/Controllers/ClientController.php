@@ -4,26 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Car;
+use App\Models\User;
 use App\Models\Product;
 use App\Models\Employee;
 use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class ClientController extends Controller
 {
 
-    /*
-        public function index()
-        {
-            try {
-                $clients = Client::paginate(10);
-                return response()->json($clients);
-            } catch (\Exception $e) {
-                return response()->json(['error' => $e->getMessage()], 500);
-            }
-        }
-    */
+
     public function index(Request $request)
     {
         try {
@@ -49,14 +41,14 @@ class ClientController extends Controller
         }
     }
     public function getAllClients()
-{
-    try {
-        $clients = Client::all();
-        return response()->json($clients);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
+    {
+        try {
+            $clients = Client::all();
+            return response()->json($clients);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
-}
 
 
 
@@ -81,6 +73,14 @@ class ClientController extends Controller
         $client = new Client($validatedData);
         $client->employee_id = $employee->id;
         $client->save();
+
+        $user = User::create([
+            'name' => $client->name,
+            'email' => $client->email,
+            'password' => Hash::make('password'),
+        ]);
+
+
 
         return response()->json($client, 201);
     }
@@ -178,8 +178,8 @@ class ClientController extends Controller
         $client->update($validatedData);
 
         return response()->json(['message' => 'Klient został pomyślnie zaktualizowany'], 200);
-     //   $request->session()->flash('success', 'Klient został pomyślnie zaktualizowany');
-      //  return response()->json(['message' => 'Klient został pomyślnie zaktualizowany'], 200);
+        //   $request->session()->flash('success', 'Klient został pomyślnie zaktualizowany');
+        //  return response()->json(['message' => 'Klient został pomyślnie zaktualizowany'], 200);
 
     }
 

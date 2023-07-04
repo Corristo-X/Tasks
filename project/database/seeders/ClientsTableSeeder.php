@@ -20,20 +20,13 @@ class ClientsTableSeeder extends Seeder
         {
             for ($i = 0; $i < 100; $i++) {
                 $client = Client::factory()->create();
-
-                $email = Str::random(10) . '@example.com';
-
                 $user = User::create([
                     'name' => $client->name,
-                    'email' => $email,
+                    'email' => $client->email,
                     'password' => Hash::make('password'),
                 ]);
                 $employee = Employee::factory()->create();
-                Client::create([
-                    'name' => $client->name,
-                    'email' => $email,
-                    'employee_id' => $employee->id,// Wygeneruj losowe ID pracownika
-                ]);
+
             }
         }
     }

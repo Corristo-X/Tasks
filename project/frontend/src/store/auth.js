@@ -1,29 +1,33 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 export const useAuthStore = defineStore('auth', {
-    state: () => ({
-        user: null,
-        token: null,
-        name: null,  // Dodane pole 'name'
-        role: null,
-        message: null,
-    }),
-    actions: {
-        setUser(payload) {
-            this.user = payload.user;
-            this.token = payload.token;
-            this.name = payload.name;  // Ustaw pole 'name'
-            this.role = payload.role;
-        },
-        logout() {
-            this.user = null;
-            this.token = null;
-            this.name = null;
-            this.role = null;
-            this.imie = null;
-        },
-        setName(imie){
-            this.name=imie;
-        }
+  state: () => ({
+    user: {
+      id: null,
+      // inne pola użytkownika
     },
+    token: null,
+    name: null,
+    role: null,
+    message: null,
+  }),
+  actions: {
+    setUser(payload) {
+        console.log(payload.id)
+      this.user.id = payload.id;
+      this.token = payload.token;
+      this.name = payload.name;
+      this.role = payload.role;
+    },
+    logout() {
+      this.user.id = null;
+      this.token = null;
+      this.name = null;
+      this.role = null;
+      this.imie = null;
+    },
+    setName(imie) {
+      this.name = imie;
+    },
+  },
 });

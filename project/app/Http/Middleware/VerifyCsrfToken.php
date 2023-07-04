@@ -16,6 +16,9 @@ class VerifyCsrfToken extends Middleware
         'http://localhost:8000/cars',
         'http://localhost:8000/login',
         'http://localhost:8000/logout',
+        'http://localhost:8000/users',
+        'http://localhost:8000/users/*',
+        'http://localhost:8000/users/*/*',
         'http://localhost:8000/cars/*',
         '/clients/*',
 
